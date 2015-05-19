@@ -1,6 +1,8 @@
 import redis
 import random
 
+db = redis.Redis('localhost')
+	
 def isNumber(input):
         try:
                 num = int(input)
@@ -72,11 +74,10 @@ def generate_race_season(season):
 			print 'Race {0} generated'.format(key)
 		print 'Season {0} generated'.format(season)
 		
-
-db = redis.Redis('localhost')
-generate_qual_season(1)
-generate_qual_season(2)
-generate_qual_season(3)
-generate_race_season(1)
-generate_race_season(2)
-generate_race_season(3)
+def start_generate():
+	generate_qual_season(1)
+	generate_qual_season(2)
+	generate_qual_season(3)
+	generate_race_season(1)
+	generate_race_season(2)
+	generate_race_season(3)

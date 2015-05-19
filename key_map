@@ -1,44 +1,41 @@
 SEASON
-[KEY] season:0 "datebegin,dateend,numpilots"
+[HASH] season {SeasonId}-"datebegin,dateend,numpilots"
 [KEY] season:count 'num'
 
 RULE
-[KEY] rule:s0:1 'num'
+[HASH] rule {s0:position}-"value"
 
 COUNTRY
-[SET] country "shortname"
-[KEY] country:1 "fullname"
-[KEY] country:count 'num'
+[HASH] country {shortname}-"fullname"
 
 TRACK
-[HASH] track:lookup:name name-id
-[KEY]  track:2 "name|country"
-[KEY]  track:lap:2 'num'
+[HASH] track:lookup {track-name}-"track-id"
+[HASH] track:{trackid} CountryShortName-country Name-name Lap-value
 [KEY]  track:count 'num'
 
 RACE
-[SET] race:s1 "raceid"
-[KEY] race:2 "trackid"
+[SET] race:{SeasonId} "race-id"
+[HASH] race:track {race-id}-"track-id"
 [KEY] race:count 'num'
 
 TEAM
-[HASH] team:lookup:name name-id
-[KEY]  team:2 "name|country"
+[HASH] team:lookup:name {TeamName}-'TeamId'
+[HASH] team:{TeamId} TeamName-name CountryShortName-country
 [KEY]  team:count 'num'
 
 PILOT
-[HASH] pilot:HAM FirstName-name LastName-name Country-country
+[HASH] pilot:{PilotShortName} FirstName-name LastName-name CountryShortName-country
 
 CONTRACT
-[KEY] contract:s3:HAM "teamid"
+[HASH] contract {SeasonId:PilotShortName}-"TeamId"
 
 POWERLVL
-[KEY] powerlvl:s3:HAM "car skill"
+[HASH] powerlvl:{SeasonId:PilotShortName} Car-level Skill-level
 
 ---
 dynamic
 ---
 
 QUAL
-[HASH] qual:2 
+[HASH] qual {race-id:PilotShortName}-"time"
 
