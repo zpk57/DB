@@ -90,7 +90,7 @@ def add_contract(season, pilot, team):
 	else:
 		dteam = db.hget('team:lookup:name', team)
 		pipe = db.pipeline()
-		pipe.set('contract:s{0}:{1}'.format(season,pilot), dteam)
+		pipe.hset('contract', 's{0}:{1}'.format(season,pilot), dteam)
 		pipe.execute()
 def add_powerlvl(season, pilot, car, skill):
 	if not db.hexists('season', season) or not db.exists('pilot:{0}'.format(pilot)):
