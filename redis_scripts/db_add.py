@@ -19,7 +19,10 @@ def add_season(datebegin, dateend, count):
 	pipe = db.pipeline()
 	pipe.hset('season', dcount+1, value)
 	pipe.incr('season:count')				#use count as id
-	pipe.execute()
+	try:
+		pipe.execute()
+	except redis.exceptions.ResponseError:
+		return
 def add_rules(season, place, points):
 	if not isNumber(season) or not isNumber(place) or not isNumber(points):
 		raise Exception('Wrong param')
@@ -29,11 +32,17 @@ def add_rules(season, place, points):
 		l = 's{0}:{1}'.format(season,place)
 		pipe = db.pipeline()
 		pipe.hset('rule', l, points)
-		pipe.execute()
+		try:
+			pipe.execute()
+		except redis.exceptions.ResponseError:
+			return
 def add_country(fullname, shortname):
 	pipe = db.pipeline()
 	pipe.hset('country', shortname, fullname) 		#we can see all avaliable countries
-	pipe.execute()
+	try:
+		pipe.execute()
+	except redis.exceptions.ResponseError:
+		return
 def add_track(name, country, laps):
 	if not isNumber(laps):
 		raise Exception('Wrong laps param')
@@ -48,7 +57,10 @@ def add_track(name, country, laps):
 			pipe.hset('track:{0}'.format(dcount+1), 'Name', name)
 			pipe.hset('track:{0}'.format(dcount+1), 'Lap', laps)
 			pipe.incr('track:count')
-			pipe.execute()
+			try:
+				pipe.execute()
+			except redis.exceptions.ResponseError:
+				return
 		else:
 			print 'Track already created'
 def add_race(season, track):
@@ -60,7 +72,10 @@ def add_race(season, track):
 		pipe.sadd('race:s{0}'.format(season), dcount+1)
 		pipe.hset('race:track', dcount+1, track)
 		pipe.incr('race:count')
-		pipe.execute()
+		try:
+			pipe.execute()
+		except redis.exceptions.ResponseError:
+			return
 	else:
 		print 'Incorrect season or track'
 def add_team(name, country):
@@ -74,7 +89,10 @@ def add_team(name, country):
 			pipe.hset('team:{0}'.format(dcount+1), 'TeamName', name)
 			pipe.hset('team:{0}'.format(dcount+1), 'CountryShortName', country)
 			pipe.incr('team:count')
-			pipe.execute()
+			try:
+				pipe.execute()
+			except redis.exceptions.ResponseError:
+				return
 		else:
 			print 'Team already created'
 def add_pilot(name, surname, shortname, country):
@@ -85,7 +103,10 @@ def add_pilot(name, surname, shortname, country):
 		pipe.hset('pilot:{0}'.format(shortname), 'FirstName', name)
 		pipe.hset('pilot:{0}'.format(shortname), 'LastName', surname)
 		pipe.hset('pilot:{0}'.format(shortname), 'CountryShortName', country)
-		pipe.execute()
+		try:
+			pipe.execute()
+		except redis.exceptions.ResponseError:
+			return
 def add_contract(season, pilot, team):
 	if not db.hexists('season', season) or not db.exists('pilot:{0}'.format(pilot)) or not db.hexists('team:lookup:name', team):
 		print 'Wrong Argument'
@@ -93,12 +114,18 @@ def add_contract(season, pilot, team):
 		dteam = db.hget('team:lookup:name', team)
 		pipe = db.pipeline()
 		pipe.hset('contract', 's{0}:{1}'.format(season,pilot), dteam)
-		pipe.execute()
+		try:
+			pipe.execute()
+		except redis.exceptions.ResponseError:
+			return
 def add_powerlvl(season, pilot, car, skill):
 	if not db.hexists('season', season) or not db.exists('pilot:{0}'.format(pilot)):
 		print 'Wrong Argument'
 	else:
 		pipe = db.pipeline()
 		pipe.hmset('powerlvl:s{0}:{1}'.format(season,pilot), {'Car':car, 'Skill':skill})	
-		pipe.execute()
+		try:
+			pipe.execute()
+		except redis.exceptions.ResponseError:	
+			return
 		
