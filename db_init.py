@@ -99,7 +99,7 @@ def add_powerlvl(season, pilot, car, skill):
 		print 'Wrong Argument'
 	else:
 		pipe = db.pipeline()
-		pipe.set('powerlvl:s{0}:{1}'.format(season,pilot), '{0} {1}'.format(car,skill))	
+		pipe.hmset('powerlvl:s{0}:{1}'.format(season,pilot), {'Car':car, 'Skill':skill})	
 		pipe.execute()
 
 db = redis.Redis('localhost')
