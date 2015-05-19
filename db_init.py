@@ -29,26 +29,22 @@ def add_rules(season, place, points):
 		pipe.set(l, points)
 		pipe.execute()
 def add_country(fullname, shortname):
-	if not db.sismember('country', shortname):
-		l = 'country:{0}'.format(shortname)
-		pipe = db.pipeline()
-		pipe.sadd('country', shortname) 		#we can see all avaliable countries
-		pipe.set(l, fullname)
-		pipe.execute()
-	else:
-		print 'Country already created'
+	pipe = db.pipeline()
+	pipe.hset('country', shortname, fullname) 		#we can see all avaliable countries
+	pipe.execute()
 def add_track(name, country, laps):
 	if not isNumber(laps):
-		raise Exception('Wrong param')
-	if not db.exists('country:{0}'.format(country)): 
+		raise Exception('Wrong laps param')
+	if not db.hexists('country', country): 
 		print 'Country not found'
 	else:
 		if not db.hexists('track:lookup:name', name):
 			dcount = int(db.get('track:count'))
 			pipe = db.pipeline()
 			pipe.hset('track:lookup:name', name, dcount+1)
-			pipe.set('track:{0}'.format(dcount+1), '{0}|{1}'.format(name,country))
-			pipe.set('track:lap:{0}'.format(dcount+1), laps)  
+			pipe.hset('track:{0}'.format(dcount+1), 'CountryShortName', country)
+			pipe.hset('track:{0}'.format(dcount+1), 'Name', name)
+			pipe.hset('track:{0}'.format(dcount+1), 'Lap', laps)
 			pipe.incr('track:count')
 			pipe.execute()
 		else:
@@ -66,27 +62,30 @@ def add_race(season, track):
 	else:
 		print 'Incorrect season or track'
 def add_team(name, country):
-	if not db.exists('country:{0}'.format(country)): 
+	if not db.hexists('country', country): 
 		print 'Country not found'
 	else:
 		if not db.hexists('team:lookup:name', name):
 			dcount = int(db.get('team:count'))
 			pipe = db.pipeline()
 			pipe.hset('team:lookup:name', name, dcount+1)
-			pipe.set('team:{0}'.format(dcount+1), '{0}|{1}'.format(name,country))
+			pipe.hset('team:{0}'.format(dcount+1), 'TeamName', name)
+			pipe.hset('team:{0}'.format(dcount+1), 'CountryShortName', country)
 			pipe.incr('team:count')
 			pipe.execute()
 		else:
 			print 'Team already created'
 def add_pilot(name, surname, shortname, country):
-	if not db.exists('country:{0}'.format(country)): 
+	if not db.hexists('country', country): 
 		print 'Country not found'
 	else:
 		pipe = db.pipeline()
-		pipe.hmset('pilot:{0}'.format(shortname), {'FirstName':name, 'LastName':surname, 'Country':country})
+		pipe.hset('pilot:{0}'.format(shortname), 'FirstName', name)
+		pipe.hset('pilot:{0}'.format(shortname), 'LastName', surname)
+		pipe.hset('pilot:{0}'.format(shortname), 'CountryShortName', country)
 		pipe.execute()
 def add_contract(season, pilot, team):
-	if not db.exists('season:{0}'.format(season)) or not db.exists('pilot:{0}'.format(pilot)) or not db.hexists('team:lookup:name', team):
+	if not db.hexists('season', season) or not db.exists('pilot:{0}'.format(pilot)) or not db.hexists('team:lookup:name', team):
 		print 'Wrong Argument'
 	else:
 		dteam = db.hget('team:lookup:name', team)
@@ -94,7 +93,7 @@ def add_contract(season, pilot, team):
 		pipe.set('contract:s{0}:{1}'.format(season,pilot), dteam)
 		pipe.execute()
 def add_powerlvl(season, pilot, car, skill):
-	if not db.exists('season:{0}'.format(season)) or not db.exists('pilot:{0}'.format(pilot)):
+	if not db.hexists('season', season) or not db.exists('pilot:{0}'.format(pilot)):
 		print 'Wrong Argument'
 	else:
 		pipe = db.pipeline()

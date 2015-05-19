@@ -6,7 +6,7 @@ RULE
 [HASH] rules s0:position-'num'
 
 COUNTRY
-[KEY] country:shortname "fullname"
+[HASH] country "shortname"-"fullname"
 
 TRACK
 [HASH] track:lookup:track-name track-id
@@ -27,7 +27,7 @@ PILOT
 [HASH] pilot:PilotShortName FirstName-name LastName-name CountryShortName-country
 
 CONTRACT
-[KEY] contract:s3:PilotShortName "teamid"
+[KEY] contract:s3:PilotShortName "team-id"
 
 POWERLVL
 [HASH] powerlvl:s3:PilotShortName Car-level Skill-level
