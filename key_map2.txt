@@ -3,14 +3,14 @@ SEASON
 [KEY] season:count 'num'
 
 RULE
-[HASH] rules s0:position-'num'
+[HASH] rule s0:position-'num'
 
 COUNTRY
 [HASH] country "shortname"-"fullname"
 
 TRACK
-[HASH] track:lookup:track-name track-id
-[HASH] track:trackid CountryShortName-country Name-name Lap-value
+[HASH] track:lookup "track-name"-"track-id"
+[HASH] track:{trackid} CountryShortName-country Name-name Lap-value
 [KEY]  track:count 'num'
 
 RACE

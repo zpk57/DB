@@ -24,9 +24,9 @@ def add_rules(season, place, points):
 	if not db.hexists('season', season):
 		print 'Not such season for a rule'
 	else:
-		l = 'rule:s{0}:{1}'.format(season,place)
+		l = 's{0}:{1}'.format(season,place)
 		pipe = db.pipeline()
-		pipe.set(l, points)
+		pipe.hset('rule', l, points)
 		pipe.execute()
 def add_country(fullname, shortname):
 	pipe = db.pipeline()
@@ -56,7 +56,7 @@ def add_race(season, track):
 		dcount = int(db.get('race:count'))
 		pipe = db.pipeline()
 		pipe.sadd('race:s{0}'.format(season), dcount+1)
-		pipe.hset('race', dcount+1, track)
+		pipe.hset('race:track', dcount+1, track)
 		pipe.incr('race:count')
 		pipe.execute()
 	else:
