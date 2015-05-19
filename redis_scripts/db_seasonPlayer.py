@@ -1,5 +1,6 @@
 from db_aggregation import seasonRaces 
 from collections import OrderedDict
+from prettytable import PrettyTable
 
 import redis 
 
@@ -17,6 +18,7 @@ def seasonPlayer(season):
 	if not db.hexists('season', season):
 		print 'Season not found'
 	else:
+		x = PrettyTable(["Name", "Points"])
 		seas = seasonRaces(season)
 		total_res = {}
 		for k,v in seas.items():
@@ -29,6 +31,7 @@ def seasonPlayer(season):
 		total = OrderedDict(sorted(total_res.items(), key=lambda x: x[1], reverse = True))  
 		for k,v in total.items():
 			dpilot = db.hgetall('pilot:{0}'.format(k))
-			print '{0} {1} \t\t\t{2}'.format(dpilot['FirstName'], dpilot['LastName'], v)
+			x.add_row(['{0} {1}'.format(dpilot['FirstName'], dpilot['LastName']), v])
+		print x
 
 db = redis.Redis('localhost')
