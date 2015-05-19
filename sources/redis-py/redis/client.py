@@ -354,7 +354,7 @@ class StrictRedis(object):
             'SENTINEL SENTINELS': parse_sentinel_slaves_and_sentinels,
             'SENTINEL SET': bool_ok,
             'SENTINEL SLAVES': parse_sentinel_slaves_and_sentinels,
-            'SET': lambda r: r and nativestr(r) == 'OK',
+            'SET': lambda r: r and (isinstance(r, ResponseError) or nativestr(r)) == 'OK',
             'SLOWLOG GET': parse_slowlog_get,
             'SLOWLOG LEN': int,
             'SLOWLOG RESET': bool_ok,
