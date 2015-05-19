@@ -24,7 +24,7 @@ def generate_qual_race(season, race):
 			time = 148 + random.randint(-5, 5)
 			time += random.random()
 			if not pcar[0] is None and not pskill[0] is None:
-				time -= (0.05 * int(pcar[0]) + 0.01 * int(pskill[0]))
+				time -= (0.1 * int(pcar[0]) + 0.05 * int(pskill[0]))
 			time = round(time,3)
 			pipe = db.pipeline()
 			pipe.hmset('qual', {'{0}:{1}'.format(race,who):time})
@@ -57,7 +57,7 @@ def generate_race(season, race):
 				time = 148 + random.randint(-5, 5)
 				time += random.random()
 				if not pcar[0] is None and not pskill[0] is None:
-					time -= (0.05 * int(pcar[0]) + 0.01 * int(pskill[0]))
+					time -= (0.1 * int(pcar[0]) + 0.05 * int(pskill[0]))
 				time = round(time,3)
 				pipe = db.pipeline()
 				pipe.hmset('time', {'{0}:{1}:{2}'.format(race,i+1,who):time})
