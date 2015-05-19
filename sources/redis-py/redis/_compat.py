@@ -30,7 +30,7 @@ if sys.version_info[0] < 3:
     def itervalues(x): return x.itervalues()
 
     def nativestr(x):
-        return x if isinstance(response, ResponseError) or isinstance(x, str) else x.encode('utf-8', 'replace')
+        return x if isinstance(x, ResponseError) or isinstance(x, str) else x.encode('utf-8', 'replace')
 
     def u(x): return x.decode()
 
