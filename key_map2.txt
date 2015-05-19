@@ -1,0 +1,41 @@
+SEASON
+[HASH] season SeasonId-"datebegin,dateend,numpilots"
+[KEY] season:count 'num'
+
+RULE
+[HASH] rules s0:position-'num'
+
+COUNTRY
+[KEY] country:shortname "fullname"
+
+TRACK
+[HASH] track:lookup:track-name track-id
+[HASH] track:trackid CountryShortName-country Name-name Lap-value
+[KEY]  track:count 'num'
+
+RACE
+[SET] race:s1 "race-id"
+[HASH] race:track "race-id"-"track-id"
+[KEY] race:count 'num'
+
+TEAM
+[HASH] team:lookup:name name-id
+[HASH] team:name-id TeamName-name CountryShortName-country
+[KEY]  team:count 'num'
+
+PILOT
+[HASH] pilot:PilotShortName FirstName-name LastName-name CountryShortName-country
+
+CONTRACT
+[KEY] contract:s3:PilotShortName "teamid"
+
+POWERLVL
+[HASH] powerlvl:s3:PilotShortName Car-level Skill-level
+
+---
+dynamic
+---
+
+QUAL
+[HASH] qual "race-id:pilot-id"-"time"
+
