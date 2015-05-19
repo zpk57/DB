@@ -13,16 +13,15 @@ def add_season(datebegin, dateend, count):
 	if not isNumber(count):
 		raise Exception('Wrong param') 
 	dcount = int(db.get('season:count'))
-	l = 'season:{0}'.format(dcount+1)
-	r = '{0} {1} {2}'.format(datebegin, dateend, count)
+	value = '{0} {1} {2}'.format(datebegin, dateend, count)
 	pipe = db.pipeline()
-	pipe.set(l, r)
+	pipe.hset('season', dcount+1, value)
 	pipe.incr('season:count')				#use count as id
 	pipe.execute()
 def add_rules(season, place, points):
 	if not isNumber(season) or not isNumber(place) or not isNumber(points):
 		raise Exception('Wrong param')
-	if not db.exists('season:{0}'.format(season)):
+	if not db.hexists('season', season):
 		print 'Not such season for a rule'
 	else:
 		l = 'rule:s{0}:{1}'.format(season,place)
@@ -57,11 +56,11 @@ def add_track(name, country, laps):
 def add_race(season, track):
 	if not isNumber(season) or not isNumber(track):
 		raise Exception('Wrong param')
-	if db.exists('season:{0}'.format(season)) and db.exists('track:{0}'.format(track)):
+	if db.hexists('season', season) and db.exists('track:{0}'.format(track)):
 		dcount = int(db.get('race:count'))
 		pipe = db.pipeline()
 		pipe.sadd('race:s{0}'.format(season), dcount+1)
-		pipe.set('race:{0}'.format(dcount+1), track)
+		pipe.hset('race', dcount+1, track)
 		pipe.incr('race:count')
 		pipe.execute()
 	else:
