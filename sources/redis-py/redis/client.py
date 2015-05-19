@@ -567,7 +567,11 @@ class StrictRedis(object):
         connection = pool.get_connection(command_name, **options)
         try:
             connection.send_command(*args)
-            return self.parse_response(connection, command_name, **options)
+            response = self.parse_response(connection, command_name, **options)
+            if isinstance(response, ResponseError):
+                return self.parse_response(connection, command_name, **options)
+            else:
+                return response
         except (ConnectionError, TimeoutError) as e:
             connection.disconnect()
             if not connection.retry_on_timeout and isinstance(e, TimeoutError):
