@@ -574,7 +574,7 @@ class Connection(object):
             self.disconnect()
             raise
         if isinstance(response, ResponseError):
-            raise response
+			print('LOL',response)
         return response
 
     def encode(self, value):
