@@ -1,0 +1,4 @@
+https://github.com/miohtama/python-Levenshtein
+https://github.com/andymccurdy/redis-py
+
+python setup.py install
